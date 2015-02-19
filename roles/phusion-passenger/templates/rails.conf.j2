@@ -18,3 +18,11 @@ passenger_pre_start {{app_server_name}};
 {% else %}
 passenger_pre_start localhost;
 {% endif %}
+
+{% if app_www_redirect and app_server_name is defined %}
+server {
+    listen       80;
+    server_name  www.{{app_server_name}};
+    return       301 $scheme://{{app_server_name}}$request_uri;
+}
+{% endif %}
