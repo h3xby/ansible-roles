@@ -1,0 +1,9 @@
+- apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7
+- apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main' update_cache=yes
+- apt: name=passenger
+
+- template: src="ruby.j2" dest={{app_path}}/shared/bin/ruby mode=0755 owner={{app_user}}
+- template: src="nginx.conf.j2" dest=/etc/nginx/conf.d/passenger.conf
+  notify: restart nginx
+- template: src="rails.conf.j2" dest="/etc/nginx/sites-enabled/{{app_name}}.rails.conf"
+  notify: restart nginx

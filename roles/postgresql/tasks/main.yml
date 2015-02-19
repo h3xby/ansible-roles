@@ -1,0 +1,16 @@
+- name: install postgresql
+  apt: name={{ item }} state=present
+  with_items:
+    - postgresql
+    - python-psycopg2
+
+- postgresql_user: name=postgres password={{ postgres_password }}
+  sudo: yes
+  sudo_user: postgres
+  when: postgres_user is not defined
+
+- name: create postgres user
+  postgresql_user: name={{postgres_user}} role_attr_flags=SUPERUSER,LOGIN password={{ postgres_password }}
+  sudo: yes
+  sudo_user: postgres
+  when: postgres_user is defined

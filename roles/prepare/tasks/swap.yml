@@ -1,0 +1,23 @@
+- name: make swapfile
+  command: dd if=/dev/zero of=/swapfile bs=1M count={{swap_size}}
+  args:
+    creates: /swapfile
+  register: swapfile_status
+
+- name: Change swap file permissions
+  file: path=/swapfile owner=root group=root mode=0600
+
+- name: format swapfile
+  command: mkswap /swapfile
+  when: swapfile_status.changed
+
+- name: add swap to fstab
+  mount: name=none
+    src=/swapfile
+    fstype=swap
+    state=present
+  register: swapfile_fstab_status
+
+- name: enable swap
+  command: swapon -a
+  when: swapfile_fstab_status.changed

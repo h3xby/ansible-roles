@@ -1,0 +1,48 @@
+- file: path="{{app_path}}/temp_release" state=absent
+- file: path="{{app_path}}/temp_release" state=directory
+  sudo_user: "{{app_user}}"
+
+- command: "sh -c \"tar c --exclude .git . | tar x -C {{app_path}}/temp_release\""
+  sudo_user: "{{app_user}}"
+  args:
+      chdir: "{{app_path}}/repo"
+
+- file: path="{{app_path}}/temp_release/{{item}}" state=absent force=yes
+  with_items: app_shared_items
+  sudo_user: "{{app_user}}"
+
+- file: dest="{{app_path}}/temp_release/{{item}}" src="{{app_path}}/shared/{{item}}" state=link force=yes
+  with_items: app_shared_items
+  sudo_user: "{{app_user}}"
+
+- command: bundle install --deployment --clean --without development test doc
+  sudo_user: "{{app_user}}"
+  args:
+      chdir: "{{app_path}}/temp_release"
+
+- command: bundle exec rake db:create
+  sudo_user: "{{app_user}}"
+  environment: "{{app_env}}"
+  args:
+      chdir: "{{app_path}}/temp_release"
+
+- command: bundle exec rake db:migrate
+  sudo_user: "{{app_user}}"
+  environment: "{{app_env}}"
+  args:
+      chdir: "{{app_path}}/temp_release"
+
+- command: bundle exec rake assets:precompile
+  sudo_user: "{{app_user}}"
+  environment: "{{app_env}}"
+  args:
+      chdir: "{{app_path}}/temp_release"
+
+- file: path="{{app_path}}/oldrelease" state=absent
+
+- command: "mv {{app_path}}/release {{app_path}}/oldrelease"
+  sudo_user: "{{app_user}}"
+
+- command: "mv {{app_path}}/temp_release {{app_path}}/release"
+  sudo_user: "{{app_user}}"
+  notify: restart nginx

@@ -1,0 +1,52 @@
+- user: name={{app_user}}
+- file: path=/home/{{app_user}}/.ssh/ state=directory owner={{app_user}} mode=0700
+- copy: src={{app_user_ssh_key}} dest=/home/{{app_user}}/.ssh/id_rsa mode=0600 owner={{app_user}}
+- copy: src={{app_user_ssh_key}}.pub dest=/home/{{app_user}}/.ssh/id_rsa.pub mode=0600 owner={{app_user}}
+
+- apt: name="{{item}}"
+  with_items:
+    - libpq-dev
+    - nodejs
+    - npm
+    - imagemagick
+    - git
+    - build-essential
+
+- file: dest=/usr/bin/node src=/usr/bin/nodejs state=link
+
+- npm: name=bower global=yes
+
+- file: path='{{app_path}}' state=directory owner='{{app_user}}'
+
+- file: path="{{app_path}}/{{item}}" state=directory
+  sudo_user: "{{app_user}}"
+  with_items:
+    - release
+    - shared
+    - repo
+
+- file: path='{{app_path}}/shared/{{item}}' state=directory
+  sudo_user: "{{app_user}}"
+  with_items:
+    - keys
+    - tmp
+    - log
+    - bin
+    - vendor/bundle
+    - config
+
+- template: src="envs.sh.j2" dest={{app_path}}/shared/bin/envs.sh mode=0755 owner={{app_user}}
+
+- sudo_user: "{{app_user}}"
+  tags: deploy
+  register: app_repo_status
+  git:
+    accept_hostkey: yes
+    recursive: yes
+    repo: "{{app_repo}}"
+    version: "{{app_version}}"
+    dest: "{{app_path}}/repo"
+
+- include: deploy.yml
+  tags: deploy
+  when: app_repo_status.changed or app_redeploy

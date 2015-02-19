@@ -1,0 +1,15 @@
+app_user: app
+app_redeploy: false
+app_user_ssh_key: ssh_key
+# app_name: some_app
+# app_repo: some_repo
+# app_server_name: example.com
+app_www_redirect: false
+app_version: master
+app_path: "/apps/{{app_name}}"
+app_shared_items:
+  - tmp
+  - log
+  - vendor/bundle
+app_env:
+  RAILS_ENV: production
