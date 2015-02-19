@@ -1,2 +1,2 @@
-# postgres_user: deploy
+postgres_user: postgres
 postgres_password: 12345678
