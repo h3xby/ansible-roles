@@ -11,4 +11,7 @@ respawn limit 10 5
 
 chdir {{app_path}}/release/
 
-exec bundle exec sidekiq -c {{app_rails_sidekiq_workers}}
+script
+  . {{app_path}}/shared/bin/envs.sh
+  bundle exec sidekiq -c {{app_rails_sidekiq_workers}}
+end script
