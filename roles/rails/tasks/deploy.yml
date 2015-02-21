@@ -45,4 +45,4 @@
 
 - command: "mv {{app_path}}/temp_release {{app_path}}/release"
   sudo_user: "{{app_user}}"
-  notify: restart nginx
+  register: app_release

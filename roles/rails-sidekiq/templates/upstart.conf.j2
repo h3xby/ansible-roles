@@ -1,0 +1,14 @@
+# Rails Sidekiq worker
+#
+
+description "Rails Sidekiq worker - {{app_name}}"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+respawn limit 10 5
+
+chdir {{app_path}}/release/
+
+exec bundle exec sidekiq -c {{app_rails_sidekiq_workers}}

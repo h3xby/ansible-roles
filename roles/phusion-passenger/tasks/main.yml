@@ -11,3 +11,10 @@
   notify: restart nginx
 - template: src="rails.conf.j2" dest="/etc/nginx/sites-enabled/{{app_name}}.rails.conf"
   notify: restart nginx
+
+# Simple hook
+- debug: msg='trigger restart nginx'
+  notify: restart nginx
+  tags: deploy
+  when: app_release.changed
+  changed_when: app_release.changed

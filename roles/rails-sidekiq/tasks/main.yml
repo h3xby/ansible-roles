@@ -1,0 +1,10 @@
+- template: src=upstart.conf.j2 dest=/etc/init/{{app_name}}.sidekiq.conf
+  notify: sidekiq restart
+- service: name={{app_name}}.sidekiq enabled=true
+
+# Simple hook
+- debug: msg='trigger restart sidekiq'
+  notify: restart sidekiq
+  tags: deploy
+  when: app_release.changed
+  changed_when: app_release.changed
