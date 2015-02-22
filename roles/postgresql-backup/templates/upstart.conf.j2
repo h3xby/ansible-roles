@@ -1,0 +1,27 @@
+description "PostgreSQL backup"
+
+script
+
+  file=/tmp/postgresql.backup.sql.gz
+  bucket={{ postgresql_backup_s3_bucket }}
+  s3Path={{ postgresql_backup_s3_path }}
+
+  su -l -c "pg_dumpall | gzip > ${file}" postgres
+
+  resource="/${bucket}/${s3Path}"
+  contentType="application/x-gzip"
+  dateValue=`date -R`
+  stringToSign="PUT\n\n${contentType}\n${dateValue}\n${resource}"
+  s3Key={{ postgresql_backup_s3_key }}
+  s3Secret={{ postgresql_backup_s3_secret }}
+  signature=`echo -n ${stringToSign} | openssl sha1 -hmac ${s3Secret} -binary | base64`
+  curl -X PUT -T "${file}" \
+    -H "Host: ${bucket}.s3.amazonaws.com" \
+    -H "Date: ${dateValue}" \
+    -H "Content-Type: ${contentType}" \
+    -H "Authorization: AWS ${s3Key}:${signature}" \
+    https://${bucket}.s3.amazonaws.com/${s3Path}
+
+  rm ${file}
+
+end script

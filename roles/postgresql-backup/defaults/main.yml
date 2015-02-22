@@ -1,0 +1,5 @@
+postgresql_backup_cron: "@daily"
+postgresql_backup_s3_key: ""
+postgresql_backup_s3_secret: ""
+postgresql_backup_s3_bucket: ""
+postgresql_backup_s3_path: ""
