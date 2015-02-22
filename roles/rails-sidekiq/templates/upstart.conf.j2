@@ -13,5 +13,6 @@ chdir {{app_path}}/release/
 
 script
   . {{app_path}}/shared/bin/envs.sh
-  bundle exec sidekiq -c {{app_rails_sidekiq_workers}}
+  bundle exec sidekiq -c {{app_rails_sidekiq_workers}}{% for queue in app_rails_sidekiq_queues %} -q {{queue}}{% endfor %}
+
 end script

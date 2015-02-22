@@ -1,1 +1,4 @@
 app_rails_sidekiq_workers: 5
+app_rails_sidekiq_queues:
+  - default
+  - mailers
