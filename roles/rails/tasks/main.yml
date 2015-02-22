@@ -39,7 +39,6 @@
 
 - sudo_user: "{{app_user}}"
   tags: deploy
-  register: app_repo_status
   git:
     accept_hostkey: yes
     recursive: yes
@@ -47,6 +46,22 @@
     version: "{{app_version}}"
     dest: "{{app_path}}/repo"
 
+- shell: "if [[ -a {{app_path}}/release/REVISION && `git log -1 --pretty=format:'%H'` = `cat {{app_path}}/release/REVISION` ]]; then echo 'ok'; else echo 'changed'; fi;"
+  sudo_user: "{{app_user}}"
+  register: app_repo
+  changed_when: app_repo.stdout.find("changed") != -1
+  tags: deploy
+  args:
+    executable: "/bin/bash"
+    chdir: "{{app_path}}/repo"
+
 - include: deploy.yml
   tags: deploy
-  when: app_repo_status.changed or app_redeploy
+  when: app_repo.changed or app_redeploy
+
+- shell: "git log -1 --pretty=format:'%H' > {{app_path}}/release/REVISION"
+  sudo_user: "{{app_user}}"
+  tags: deploy
+  args:
+    chdir: "{{app_path}}/repo"
+  when: app_release.changed
