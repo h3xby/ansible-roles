@@ -68,5 +68,8 @@
   when: app_release.changed
 
 - include: fluentd.yml
-  tag: logs
+  tags: logs
   when: app_fluentd_enabled
+
+- include: logrotate.yml
+  tags: logs

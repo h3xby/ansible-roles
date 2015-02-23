@@ -1,0 +1,12 @@
+{{app_path}}/shared/log/*.log {
+  weekly
+  missingok
+  rotate 52
+  compress
+  delaycompress
+  notifempty
+  create 0640 {{app_user}} {{app_user}}
+  postrotate
+    [ -s /run/nginx.pid ] && kill -USR1 `cat /run/nginx.pid`
+  endscript
+}
