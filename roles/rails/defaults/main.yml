@@ -13,3 +13,9 @@ app_shared_items:
   - vendor/bundle
 app_env:
   RAILS_ENV: production
+app_fluentd_enabled: false
+# app_fluentd_s3:
+#   key:
+#   secret:
+#   bucket:
+#   path:

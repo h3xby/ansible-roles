@@ -1,4 +1,5 @@
-- user: name={{app_user}}
+- group: name={{app_user}}
+- user: name={{app_user}} group={{app_user}}
 - file: path=/home/{{app_user}}/.ssh/ state=directory owner={{app_user}} mode=0700
 - copy: src={{app_user_ssh_key}} dest=/home/{{app_user}}/.ssh/id_rsa mode=0600 owner={{app_user}}
 - copy: src={{app_user_ssh_key}}.pub dest=/home/{{app_user}}/.ssh/id_rsa.pub mode=0600 owner={{app_user}}
@@ -65,3 +66,7 @@
   args:
     chdir: "{{app_path}}/repo"
   when: app_release.changed
+
+- include: fluentd.yml
+  tag: logs
+  when: app_fluentd_enabled

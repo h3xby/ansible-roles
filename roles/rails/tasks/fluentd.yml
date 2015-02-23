@@ -1,0 +1,4 @@
+- file: path={{app_path}}/shared/log owner={{app_user}} group={{app_user}} mode=0775
+- user: name=td-agent groups={{app_user}} append=yes
+- template: src=fluentd.conf.j2 dest=/etc/td-agent/conf.d/{{app_name}}.rails.conf
+  notify: restart fluentd

@@ -1,0 +1,52 @@
+<source>
+  type tail
+  path {{app_path}}/shared/log/nginx.access.log
+  pos_file {{app_path}}/shared/log/nginx.access.log.pos
+  tag {{app_name}}.nginx.access
+  format nginx
+</source>
+
+<source>
+  type tail
+  path {{app_path}}/shared/log/nginx.error.log
+  pos_file {{app_path}}/shared/log/nginx.error.log.pos
+  tag {{app_name}}.nginx.error
+  format /^(?<time>[^ ]+ [^ ]+) \[(?<log_level>.*)\] (?<pid>\d*).(?<tid>[^:]*): (?<message>.*)$/
+</source>
+
+{% if app_fluentd_s3 is defined %}
+<match {{app_name}}.nginx.error>
+  type s3
+
+  aws_key_id {{app_fluentd_s3.key}}
+  aws_sec_key {{app_fluentd_s3.secret}}
+  s3_bucket {{app_fluentd_s3.bucket}}
+  path {{app_fluentd_s3.path}}/nginx.error
+
+  {% if app_fluentd_s3.region is defined %}
+  s3_region {{app_fluentd_s3.region}}
+  {% endif %}
+  
+  format out_file
+  output_time false
+
+  buffer_path /var/log/fluentd/{{app_name}}.nginx.error/
+</match>
+<match {{app_name}}.nginx.access>
+  type s3
+
+  aws_key_id {{app_fluentd_s3.key}}
+  aws_sec_key {{app_fluentd_s3.secret}}
+  s3_bucket {{app_fluentd_s3.bucket}}
+  path {{app_fluentd_s3.path}}/nginx.access
+
+  {% if app_fluentd_s3.region is defined %}
+  s3_region {{app_fluentd_s3.region}}
+  {% endif %}
+  
+  format out_file
+  output_time false
+
+  buffer_path /var/log/fluentd/{{app_name}}.nginx.access/
+</match>
+{% endif %}

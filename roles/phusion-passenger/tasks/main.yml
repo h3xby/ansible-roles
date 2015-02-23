@@ -18,3 +18,7 @@
   tags: deploy
   when: app_release.changed
   changed_when: app_release.changed
+
+- include: fluentd.yml
+  when: app_fluentd_enabled
+  tags: logs
