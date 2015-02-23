@@ -1,2 +1,2 @@
-- template: src=upstart.conf.j2 dest=/etc/init/postgresql.backup.conf
-- template: src=cron.j2 dest=/etc/cron.d/postgresql.backup
+- template: src=upstart.conf.j2 dest=/etc/init/postgresql_backup.conf
+- template: src=cron.j2 dest=/etc/cron.d/postgresql_backup
