@@ -46,3 +46,10 @@
 - command: "mv {{app_path}}/temp_release {{app_path}}/release"
   sudo_user: "{{app_user}}"
   register: app_release
+
+- shell: "export APP_ENVS_SCRIPT={{app_path}}/shared/bin/envs.sh; if [ -x deploy/post_deploy ]; then deploy/post_deploy; fi"
+  sudo_user: "{{app_user}}"
+  environment: "{{app_env}}"
+  when: app_release.changed
+  args:
+    chdir: "{{app_path}}/release"
