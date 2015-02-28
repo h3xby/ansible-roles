@@ -1,8 +1,6 @@
 - apt: name=nginx-extras
 - service: name=nginx enabled=yes
 
-- file: path=/etc/nginx/sites-enabled/default state=absent
-  notify: restart nginx
 - template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
   notify: restart nginx
 

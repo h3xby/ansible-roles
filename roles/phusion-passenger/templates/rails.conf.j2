@@ -1,8 +1,8 @@
 server {
   listen 80;
-  {% if app_server_name is defined %}
-  server_name {{app_server_name}}
-  {% endif %}
+{% if app_server_name is defined %}
+  server_name {{app_server_name}};
+{% endif %}
 
   client_max_body_size 50M;
   error_log {{app_path}}/shared/log/nginx.error.log;
