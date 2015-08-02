@@ -13,7 +13,7 @@
 - debug: 
     msg: "Current repo HEAD: {{git_repo_result.after}}"
 - name: Get current release revision
-  shell: cat {{app_path}}/current/REVISION
+  shell: "[ -f {{app_path}}/current/REVISION ] && cat {{app_path}}/current/REVISION || echo ''"
   register: git_repo_revision
 - debug:
     msg: "Current release revision: {{git_repo_revision.stdout}}"
