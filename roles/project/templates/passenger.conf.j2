@@ -16,8 +16,6 @@ server {
   passenger_app_env {{tier}};
   passenger_min_instances {{min_instances}};
 }
-{% if server_name is defined %}
-passenger_pre_start http://{{server_name}};
-{% else %}
-passenger_pre_start http://localhost;
+{% if passenger_pre_start is defined %}
+passenger_pre_start http://{{passenger_pre_start}};
 {% endif %}
