@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+{% if redis_password is defined %}
+export REDIS_URL="redis://:{{ redis_password }}@{{ redis_host }}:{{ redis_port }}/{{ redis_db }}"
+{% else %}
+export REDIS_URL="redis://{{ redis_host }}:{{ redis_port }}/{{ redis_db }}"
+{% endif %}

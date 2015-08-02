@@ -1,9 +1,0 @@
-- command: sh -c ". {{app_path}}/shared/bin/envs.sh && bundle exec whenever --update"
-  sudo_user: "{{app_user}}"
-  tags: deploy
-  when: app_release is defined and app_release.changed
-  environment:
-    APP_ENVS_SCRIPT: "{{app_path}}/shared/bin/envs.sh"
-  args:
-    chdir: "{{app_path}}/release"
-

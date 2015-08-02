@@ -1,0 +1,23 @@
+- include_vars: "type/{{type}}.yml"
+
+- name: Create project related dirs
+  file: path="{{app_path}}/{{item}}" state=directory
+  with_items:
+    - 
+    - shared
+    - releases
+- name: Get release timestamp
+  local_action: command date -u +%Y%m%d%H%M%SZ
+  run_once: true
+  register: release_timestamp_command
+  sudo: no
+- set_fact: release_timestamp="{{release_timestamp_command.stdout}}"
+- set_fact: release_path="{{app_path}}/releases/{{release_timestamp}}"
+  notify: finish project deploy
+- debug: 
+    msg: "Release path: {{release_path}}"
+
+- include: "update/{{update_strategy}}.yml"
+
+- include: deploy.yml
+  when: deploy

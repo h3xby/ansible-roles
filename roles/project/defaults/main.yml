@@ -1,0 +1,22 @@
+tier: production
+fullname: "{{name}}_{{tier}}"
+user: "{{fullname}}"
+generate_deploy_ssh_key: true
+deploy_ssh_key: "{{playbook_dir}}/credentials/keys/{{user}}.deploy"
+authorized_keys: []
+services: []
+
+# Postgresql service
+postgresql_password: "{{ lookup('password', playbook_dir + '/credentials/passwords/postgresql_' +user)}}"
+postgresql_db: "{{fullname}}"
+postgresql_user: "{{fullname}}"
+postgresql_host: localhost
+
+# Nginx
+server_name: localhost
+min_instances: 1
+
+# Redis
+redis_host: localhost
+redis_port: 6379
+redis_db: 0

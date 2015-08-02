@@ -1,0 +1,14 @@
+- include: symlinks.yml
+
+- include: "type/{{type}}.yml"
+
+- name: Symlink current
+  file: src="{{release_path}}"
+    dest="{{app_path}}/current"
+    state=link
+    force=yes
+  notify: "project restart {{type}}"
+
+- name: Clean up releases
+  shell: ls -1dt {{ app_path }}/releases/* | tail -n +$(({{ keep_releases }} + 1)) | xargs rm -rf
+  when: keep_releases > 0

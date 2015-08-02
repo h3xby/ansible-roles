@@ -1,2 +1,0 @@
-- include: swap.yml
-  when: ansible_virtualization_type != 'OpenVZ'

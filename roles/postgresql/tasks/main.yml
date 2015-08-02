@@ -1,10 +1,13 @@
-- name: install postgresql
-  apt: name={{ item }} state=present
+- name: Install postgresql packages
+  apt: name={{item}}
   with_items:
     - postgresql
-    - python-psycopg2
+    - postgresql-contrib
+    - python-psycopg2   # Needed for ansible management
 
-- name: create postgres user
-  postgresql_user: name={{postgres_user}} role_attr_flags=SUPERUSER,LOGIN password={{ postgres_password }}
+- name: Generate and set postgres admin password
   sudo: yes
   sudo_user: postgres
+  postgresql_user: name=postgres
+    password="{{lookup('password', playbook_dir + '/credentials/passwords/postgresql_admin_password')}}"
+

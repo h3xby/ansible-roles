@@ -1,0 +1,4 @@
+- name: project restart rails
+  command: touch tmp/restart.txt  # restart phusion passenger
+  args:
+    chdir: "{{app_path}}/current"

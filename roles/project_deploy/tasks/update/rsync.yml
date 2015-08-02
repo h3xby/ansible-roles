@@ -1,0 +1,12 @@
+- name: Update via rsync
+  synchronize:
+    src: "{{rsync_src}}/"
+    dest: "{{app_path}}/repo"
+    rsync_opts: "--filter=': /.rsync-filter'"
+    archive: no
+    recursive: yes
+    delete: yes
+    times: yes
+- name: Extract repo copy to release dir
+  shell: cp -r {{app_path}}/repo {{release_path}}
+- set_fact: deploy=true

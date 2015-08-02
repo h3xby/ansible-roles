@@ -1,0 +1,6 @@
+- name: Install redis client
+  apt: name=redis-tools
+- name: Write redis environment variables
+  sudo: yes
+  sudo_user: "{{user}}"
+  template: src="redis.sh.j2" dest="~/.profile.d/redis.sh"

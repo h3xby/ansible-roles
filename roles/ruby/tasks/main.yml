@@ -1,7 +1,0 @@
-- apt_key: keyserver=keyserver.ubuntu.com id=80F70E11F0F0D5F10CB20E62F5DA5F09C3173AA6
-- apt_repository: repo='deb http://ppa.launchpad.net/brightbox/ruby-ng/ubuntu trusty main' update_cache=yes
-- apt: name={{item}}
-  with_items:
-    - ruby2.1
-    - ruby2.1-dev
-- gem: name=bundler user_install=no

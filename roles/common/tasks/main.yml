@@ -1,0 +1,8 @@
+- include: swap.yml
+  when: swap_file_enable
+
+- name: Install utils
+  apt: name={{item}} update_cache=true
+  with_items:
+    - git
+    - rsync

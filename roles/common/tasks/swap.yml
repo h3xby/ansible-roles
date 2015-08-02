@@ -1,0 +1,24 @@
+- name: Get swapfile status
+  stat: path="{{swap_file}}"
+  register: swap_file_result
+  changed_when: (swap_file_result.stat.exists and swap_file_result.stat.size != swap_file_size*1024*1024) or not swap_file_result.stat.exists
+- name: Disable swapfile
+  command: swapoff {{swap_file}}
+  when: swap_file_result.changed and swap_file_result.stat.exists
+- name: Make swapfile
+  command: dd if=/dev/zero of="{{swap_file}}" bs=1M count={{swap_file_size}}
+  register: swap_file_result
+  when: swap_file_result.changed
+- name: Set swapfile permissions
+  file: path="{{swap_file}}" owner=root group=root mode=0600
+- name: Format swapfile
+  command: mkswap "{{swap_file}}"
+  when: swap_file_result.changed
+- name: Add swapfile to fstab
+  mount: name=none
+    src="{{swap_file}}"
+    fstype=swap
+    state=present
+- name: Enable swapfile
+  command: swapon {{swap_file}}
+  when: swap_file_result.changed

@@ -1,0 +1,30 @@
+- name: Install postgresql packages
+  apt: name={{item}}
+  with_items:
+    - postgresql-client
+    - libpq-dev
+    - python-psycopg2   # Needed for ansible management
+
+- name: Create new postgresql user
+  # TODO: Create user using remote access or individual db role
+  sudo: yes 
+  sudo_user: postgres
+  postgresql_user: name={{user}}
+    password={{postgresql_password}}
+    role_attr_flags="LOGIN"
+    login_host={{postgresql_host}}
+    login_user=postgres
+    login_password={{ lookup('password', playbook_dir+'/credentials/passwords/postgresql_admin_password') }}
+- name: Create postgresql database
+  sudo: yes 
+  sudo_user: postgres
+  postgresql_db: name={{user}}
+    owner={{user}}
+    login_host={{postgresql_host}}
+    login_user=postgres
+    login_password={{ lookup('password', playbook_dir+'/credentials/passwords/postgresql_admin_password') }}
+
+- name: Write postgresql environment variables
+  sudo: yes
+  sudo_user: "{{user}}"
+  template: src="postgresql.sh.j2" dest="~/.profile.d/postgresql.sh"

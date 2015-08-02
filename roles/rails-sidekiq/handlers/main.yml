@@ -1,2 +1,0 @@
-- name: restart sidekiq
-  service: name={{app_name}}.sidekiq state=restarted

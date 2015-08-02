@@ -1,0 +1,11 @@
+app_path: "~/app/"
+core_symlinks: []
+symlinks: []
+keep_releases: 5
+deploy: false  # Override to force deploy without checking versions(revisions)
+
+  # git
+git_version: master
+
+  # rsync
+  # rsync_src: ./

@@ -1,0 +1,6 @@
+- name: Upload nginx config for project
+  notify: reload nginx
+  template: src={{item}} dest="/etc/nginx/sites-enabled/{{ fullname }}"
+  with_first_found:
+    - "{{passenger_nginx_conf}}"
+    - "passenger.conf.j2"

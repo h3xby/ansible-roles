@@ -1,0 +1,11 @@
+- name: Install gems
+  shell: bundle install --deployment --without test development chdir="{{release_path}}"
+- name: Migrate database
+  command: bash -lc 'bundle exec rake db:migrate'
+  args:
+    chdir: "{{release_path}}"
+  run_once: true
+- name: Precompile assets
+  command: bash -lc "bundle exec rake assets:precompile"
+  args:
+    chdir: "{{release_path}}"

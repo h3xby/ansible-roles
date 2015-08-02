@@ -1,75 +1,19 @@
-- group: name={{app_user}}
-- user: name={{app_user}} group={{app_user}}
-- file: path=/home/{{app_user}}/.ssh/ state=directory owner={{app_user}} mode=0700
-- copy: src={{app_user_ssh_key}} dest=/home/{{app_user}}/.ssh/id_rsa mode=0600 owner={{app_user}}
-- copy: src={{app_user_ssh_key}}.pub dest=/home/{{app_user}}/.ssh/id_rsa.pub mode=0600 owner={{app_user}}
+- name: Add Ruby BrightBox PPA key
+  apt_key: keyserver=keyserver.ubuntu.com id=80F70E11F0F0D5F10CB20E62F5DA5F09C3173AA6
+- name: Add Ruby BrightBox PPA
+  apt_repository: repo='deb http://ppa.launchpad.net/brightbox/ruby-ng/ubuntu trusty main' update_cache=yes
+- name: Install/update ruby
+  apt: name={{item}}
+  with_items:
+    - ruby2.1
+    - ruby2.1-dev
+- gem: name=bundler user_install=no
 
-- apt: name="{{item}}"
+- name: Install rails related packages
+  apt: name="{{item}}"
   with_items:
     - libpq-dev
     - nodejs
     - npm
     - imagemagick
-    - git
     - build-essential
-
-- file: dest=/usr/bin/node src=/usr/bin/nodejs state=link
-
-- npm: name=bower global=yes
-
-- file: path='{{app_path}}' state=directory owner='{{app_user}}'
-
-- file: path="{{app_path}}/{{item}}" state=directory
-  sudo_user: "{{app_user}}"
-  with_items:
-    - release
-    - shared
-    - repo
-
-- file: path='{{app_path}}/shared/{{item}}' state=directory
-  sudo_user: "{{app_user}}"
-  with_items:
-    - keys
-    - tmp
-    - log
-    - bin
-    - vendor/bundle
-    - config
-
-- template: src="envs.sh.j2" dest={{app_path}}/shared/bin/envs.sh mode=0755 owner={{app_user}}
-
-- sudo_user: "{{app_user}}"
-  tags: deploy
-  git:
-    accept_hostkey: yes
-    recursive: yes
-    repo: "{{app_repo}}"
-    version: "{{app_version}}"
-    dest: "{{app_path}}/repo"
-
-- shell: "if [[ -a {{app_path}}/release/REVISION && `git log -1 --pretty=format:'%H'` = `cat {{app_path}}/release/REVISION` ]]; then echo 'ok'; else echo 'changed'; fi;"
-  sudo_user: "{{app_user}}"
-  register: app_repo
-  changed_when: app_repo.stdout.find("changed") != -1
-  tags: deploy
-  args:
-    executable: "/bin/bash"
-    chdir: "{{app_path}}/repo"
-
-- include: deploy.yml
-  tags: deploy
-  when: app_repo.changed or app_redeploy
-
-- shell: "git log -1 --pretty=format:'%H' > {{app_path}}/release/REVISION"
-  sudo_user: "{{app_user}}"
-  tags: deploy
-  args:
-    chdir: "{{app_path}}/repo"
-  when: app_release.changed
-
-- include: fluentd.yml
-  tags: logs
-  when: app_fluentd_enabled
-
-- include: logrotate.yml
-  tags: logs

@@ -1,0 +1,31 @@
+- name: Update project from git 
+  git:
+    repo: "{{git_repo}}"
+    depth: 1
+    version: "{{git_version}}"
+    dest: "{{app_path}}/repo/"
+    accept_hostkey: yes
+    track_submodules: yes
+    update: yes
+    force: yes
+    clone: yes
+  register: git_repo_result
+- debug: 
+    msg: "Current repo HEAD: {{git_repo_result.after}}"
+- name: Get current release revision
+  shell: cat {{app_path}}/current/REVISION
+  register: git_repo_revision
+- debug:
+    msg: "Current release revision: {{git_repo_revision.stdout}}"
+- set_fact: deploy=true
+  when: not deploy and (git_repo_revision.stdout != git_repo_result.after)
+- name: Export a copy of repo
+  shell: "git checkout-index -f -a --prefix=`echo {{release_path}}`/"
+  when: deploy
+  args:
+    chdir: "{{ app_path }}/repo"
+- name: Write git revision to file
+  shell: "git log -1 --pretty=format:'%H' > {{ release_path }}/REVISION"
+  when: deploy
+  args:
+    chdir: "{{ app_path }}/repo"

@@ -1,7 +1,0 @@
-- apt_key: url="http://packages.treasuredata.com/GPG-KEY-td-agent"
-- apt_repository: repo="deb [arch=amd64] http://packages.treasuredata.com/2/ubuntu/trusty/ trusty contrib" update_cache=true
-- apt: name="td-agent"
-- service: name="td-agent" state=started enabled=yes
-- file: path=/etc/td-agent/conf.d/ state=directory
-- file: path=/var/log/fluentd/ state=directory owner=td-agent group=td-agent
-- template: src=td-agent.conf.j2 dest=/etc/td-agent/td-agent.conf

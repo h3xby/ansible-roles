@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+server {
+  listen 80;
+{% if server_name is defined %}
+  server_name {{server_name}};
+{% endif %}
+
+  client_max_body_size 50M;
+  error_log /var/log/nginx/{{user}}.error.log;
+  access_log /var/log/nginx/{{user}}.access.log;
+
+  root /home/{{user}}/app/current/public;
+  passenger_enabled on;
+  passenger_user {{user}};
+  passenger_app_env {{tier}};
+  passenger_min_instances {{min_instances}};
+}
+{% if server_name is defined %}
+passenger_pre_start http://{{server_name}};
+{% else %}
+passenger_pre_start http://localhost;
+{% endif %}

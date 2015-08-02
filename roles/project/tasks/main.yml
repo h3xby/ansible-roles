@@ -1,0 +1,56 @@
+- name: Create project user
+  user: name="{{user}}" shell="/bin/bash"
+- name: Add authorized keys
+  authorized_key: 
+    key: "{{ item }}"
+    user: "{{ user }}"
+  with_items: "{{authorized_keys}}"
+
+- name: Generate deploy ssh key
+  local_action: command ssh-keygen -P "" -f {{deploy_ssh_key}} creates={{deploy_ssh_key}}
+  when: generate_deploy_ssh_key
+- name: Upload deploy ssh key
+  sudo: yes
+  sudo_user: "{{user}}"
+  copy: src="{{deploy_ssh_key}}{{item}}"
+    dest="~/.ssh/id_rsa{{item}}"
+    owner="{{user}}"
+    group="{{user}}"
+    mode="0600"
+    backup=yes
+  with_items:
+    - ""
+    - .pub
+  when: generate_deploy_ssh_key
+
+- name: Create user profile.d dir
+  file: path="~/.profile.d/" state=directory
+  sudo: yes
+  sudo_user: "{{user}}"
+- name: Setup bash autosourcing .profile.d
+  lineinfile: dest="~/.profile" line="for f in ~/.profile.d/*; do source $f; done"
+  sudo: yes
+  sudo_user: "{{user}}"
+
+- name: Generate app environment file
+  template: src=env.sh.j2 dest=~/.profile.d/project_env.sh
+  sudo: yes
+  sudo_user: "{{user}}"
+
+# In ansible 1.6 include with_items was deprecated
+# Wait for ansible 2.0 release to rewrite this
+- include: "postgresql.yml"
+  when: '"postgresql" in services'
+  tags:
+    - db
+    - postgres
+- include: "passenger.yml"
+  when: '"passenger" in services'
+  tags:
+    - web
+    - passenger
+- include: "redis.yml"
+  when: '"redis" in services'
+  tags:
+    - cache
+    - redis

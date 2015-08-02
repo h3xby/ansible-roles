@@ -1,0 +1,18 @@
+- name: Create shared directories
+  file: path="{{app_path}}/shared/{{item}}" state=directory force=yes
+  with_flattened:
+    - "{{ core_symlinks|default([])}}"
+    - "{{ symlinks|default([]) }}"
+  when: item.endswith('/')
+- name: Delete shared directories from release
+  file: path="{{release_path}}/{{item}}" state=absent force=yes
+  with_flattened:
+    - "{{ core_symlinks|default([])}}"
+    - "{{ symlinks|default([]) }}"
+  when: item.endswith('/')
+- name: Symlink shared
+  file: src="{{app_path}}/shared/{{item.strip('/')}}" dest="{{release_path}}/{{item.strip('/')}}" state=link force=yes
+  with_flattened:
+    - "{{ core_symlinks|default([])}}"
+    - "{{ symlinks|default([]) }}"
+
