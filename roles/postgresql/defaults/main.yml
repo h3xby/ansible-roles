@@ -1,0 +1,1 @@
+postgresql_admin_password: "{{lookup('password', playbook_dir + '/credentials/passwords/postgresql_admin_password')}}"

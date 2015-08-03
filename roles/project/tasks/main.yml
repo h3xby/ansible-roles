@@ -8,19 +8,26 @@
 
 - name: Generate deploy ssh key
   local_action: command ssh-keygen -P "" -f {{deploy_ssh_key}} creates={{deploy_ssh_key}}
-  when: generate_deploy_ssh_key
-- name: Upload deploy ssh key
+  when: generate_deploy_ssh_key and not deploy_ssh_key_public and not deploy_ssh_key_private
+- name: Upload private deploy ssh key
   sudo: yes
   sudo_user: "{{user}}"
-  copy: src="{{deploy_ssh_key}}{{item}}"
-    dest="~/.ssh/id_rsa{{item}}"
+  copy: content="{{deploy_ssh_key_private}}"
+    dest="~/.ssh/id_rsa"
     owner="{{user}}"
     group="{{user}}"
     mode="0600"
     backup=yes
-  with_items:
-    - ""
-    - .pub
+  when: generate_deploy_ssh_key
+- name: Upload public deploy ssh key
+  sudo: yes
+  sudo_user: "{{user}}"
+  copy: content="{{deploy_ssh_key_public}}"
+    dest="~/.ssh/id_rsa.pub"
+    owner="{{user}}"
+    group="{{user}}"
+    mode="0600"
+    backup=yes
   when: generate_deploy_ssh_key
 
 - name: Create user profile.d dir

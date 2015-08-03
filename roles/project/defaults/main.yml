@@ -2,7 +2,8 @@ tier: production
 fullname: "{{name}}_{{tier}}"
 user: "{{fullname}}"
 generate_deploy_ssh_key: true
-deploy_ssh_key: "{{playbook_dir}}/credentials/keys/{{user}}.deploy"
+deploy_ssh_key_private: "{{ lookup('file', playbook_dir+'/credentials/keys/{{user.deploy') }}"
+deploy_ssh_key_public: "{{ lookup('file', playbook_dir+'/credentials/keys/{{user.deploy.pub') }}"
 authorized_keys: []
 services: []
 
@@ -11,6 +12,7 @@ postgresql_password: "{{ lookup('password', playbook_dir + '/credentials/passwor
 postgresql_db: "{{fullname}}"
 postgresql_user: "{{fullname}}"
 postgresql_host: localhost
+postgresql_admin_password: "{{ lookup('file', playbook_dir+'/credentials/passwords/postgresql_admin_password') }}"
 
 # Nginx
 server_name: localhost

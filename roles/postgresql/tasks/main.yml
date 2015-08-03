@@ -9,5 +9,4 @@
   sudo: yes
   sudo_user: postgres
   postgresql_user: name=postgres
-    password="{{lookup('password', playbook_dir + '/credentials/passwords/postgresql_admin_password')}}"
-
+    password={{postgresql_admin_password}}
