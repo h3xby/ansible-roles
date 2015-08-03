@@ -2,8 +2,6 @@ tier: production
 fullname: "{{name}}_{{tier}}"
 user: "{{fullname}}"
 generate_deploy_ssh_key: true
-deploy_ssh_key_private: "{{ lookup('file', playbook_dir+'/credentials/keys/{{user.deploy') }}"
-deploy_ssh_key_public: "{{ lookup('file', playbook_dir+'/credentials/keys/{{user.deploy.pub') }}"
 authorized_keys: []
 services: []
 
