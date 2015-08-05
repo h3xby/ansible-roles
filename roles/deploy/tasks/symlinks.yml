@@ -1,9 +1,9 @@
 - name: Create shared directories
-  file: path="{{app_path}}/shared/{{item}}" state=directory force=yes
+  file: path="{{app_path}}/shared/{{ item.rpartition('/')[0] }}" state=directory force=yes
   with_flattened:
     - "{{ core_symlinks|default([])}}"
     - "{{ symlinks|default([]) }}"
-  when: item.endswith('/')
+  when: item.find('/') != -1
 - name: Delete shared directories from release
   file: path="{{release_path}}/{{item}}" state=absent force=yes
   with_flattened:
