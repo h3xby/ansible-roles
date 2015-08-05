@@ -13,7 +13,7 @@ server {
   root /home/{{user}}/app/current/public;
   passenger_enabled on;
   passenger_user {{user}};
-  passenger_app_env {{tier}};
+  passenger_app_env {{app_env}};
   passenger_min_instances {{min_instances}};
 }
 {% if passenger_pre_start is defined %}

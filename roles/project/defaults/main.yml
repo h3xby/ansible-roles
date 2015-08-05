@@ -1,4 +1,5 @@
 tier: production
+app_env: "{{tier}}"
 fullname: "{{name}}_{{tier}}"
 user: "{{fullname}}"
 generate_deploy_ssh_key: true
