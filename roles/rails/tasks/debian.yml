@@ -1,0 +1,14 @@
+- name: Install/update ruby
+  apt: name={{item}}
+  with_items:
+    - ruby
+    - ruby-dev
+- name: Install rails related packages
+  apt: name="{{item}}"
+  with_items:
+    - libpq-dev
+    - nodejs
+    - nodejs-legacy
+    - npm
+    - imagemagick
+    - build-essential

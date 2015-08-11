@@ -1,19 +1,8 @@
-- name: Add Ruby BrightBox PPA key
-  apt_key: keyserver=keyserver.ubuntu.com id=80F70E11F0F0D5F10CB20E62F5DA5F09C3173AA6
-- name: Add Ruby BrightBox PPA
-  apt_repository: repo='deb http://ppa.launchpad.net/brightbox/ruby-ng/ubuntu trusty main' update_cache=yes
-- name: Install/update ruby
-  apt: name={{item}}
-  with_items:
-    - ruby2.1
-    - ruby2.1-dev
-- gem: name=bundler user_install=no
+- include: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+- include: debian.yml
+  when: ansible_distribution == 'Debian'
 
-- name: Install rails related packages
-  apt: name="{{item}}"
+- gem: name={{item}} user_install=no
   with_items:
-    - libpq-dev
-    - nodejs
-    - npm
-    - imagemagick
-    - build-essential
+    - bundler
