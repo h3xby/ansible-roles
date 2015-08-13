@@ -21,3 +21,9 @@ min_instances: 1
 redis_host: localhost
 redis_port: 6379
 redis_db: 0
+
+# Foreman
+foreman_enabled: true
+foreman_bind: /run/user/$UID/web.socket
+
+# Nginx 

@@ -1,11 +1,11 @@
 - name: Create project user
   user: name="{{user}}" shell="/bin/bash"
+
 - name: Add authorized keys
   authorized_key: 
     key: "{{ item }}"
     user: "{{ user }}"
   with_items: "{{authorized_keys}}"
-
 - name: Upload private deploy ssh key
   sudo: yes
   sudo_user: "{{user}}"
@@ -31,15 +31,17 @@
   file: path="~/.profile.d/" state=directory
   sudo: yes
   sudo_user: "{{user}}"
+  notify: restart foreman
 - name: Setup bash autosourcing .profile.d
   lineinfile: dest="~/.profile" line="for f in ~/.profile.d/*; do source $f; done"
   sudo: yes
   sudo_user: "{{user}}"
-
+  notify: restart foreman
 - name: Generate app environment file
   template: src=env.sh.j2 dest=~/.profile.d/project_env.sh
   sudo: yes
   sudo_user: "{{user}}"
+  notify: restart foreman
 
 # In ansible 1.6 include with_items was deprecated
 # Wait for ansible 2.0 release to rewrite this
@@ -48,13 +50,25 @@
   tags:
     - db
     - postgres
-- include: "passenger.yml"
-  when: '"passenger" in services'
-  tags:
-    - web
-    - passenger
 - include: "redis.yml"
   when: '"redis" in services'
   tags:
     - cache
     - redis
+
+- name: Enable user services autostart
+  command: loginctl enable-linger {{user}}
+- name: Create user services dir
+  file: path="~/.config/systemd/user/" state=directory
+  become: true
+  become_user: "{{user}}"
+- name: Create user foreman service
+  template: src=foreman.service.j2 dest="~/.config/systemd/user/foreman.service"
+  become: true
+  become_user: "{{user}}"
+  notify: restart foreman
+- name: Enable user foreman service
+  command: /bin/bash -lc 'systemctl --user {{ foreman_enabled | ternary('enable', 'disable') }} foreman'
+  become: true
+  become_user: "{{user}}"
+

@@ -7,3 +7,8 @@
     - git
     - rsync
     - sudo
+
+- name: Install systemd
+  apt: name={{item}} update_cache=true
+  with_items:
+    - libpam-systemd

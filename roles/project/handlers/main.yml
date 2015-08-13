@@ -1,0 +1,4 @@
+- name: restart foreman
+  command: /bin/bash -lc 'systemctl --user restart foreman'
+  become: yes
+  become_user: "{{user}}"

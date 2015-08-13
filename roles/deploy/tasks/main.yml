@@ -13,7 +13,6 @@
   sudo: no
 - set_fact: release_timestamp="{{release_timestamp_command.stdout}}"
 - set_fact: release_path="{{app_path}}/releases/{{release_timestamp}}"
-  notify: finish project deploy
 - debug: 
     msg: "Release path: {{release_path}}"
 
