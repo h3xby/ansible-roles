@@ -1,3 +1,6 @@
+- name: Setup foreman
+  gem: name=foreman user_install=no
+
 - name: Create project user
   user: name="{{user}}" shell="/bin/bash"
 
