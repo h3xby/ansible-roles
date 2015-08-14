@@ -12,3 +12,6 @@
   apt: name={{item}} update_cache=true
   with_items:
     - libpam-systemd
+
+- name: Create journal logs dir
+  file: path=/var/log/journal state=directory
