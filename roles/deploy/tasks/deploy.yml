@@ -7,7 +7,7 @@
     dest="{{app_path}}/current"
     state=link
     force=yes
-  notify: "restart project"
+  notify: "restart foreman"
 
 - name: Clean up releases
   shell: ls -1dt {{ app_path }}/releases/* | tail -n +$(({{ keep_releases }} + 1)) | xargs rm -rf
