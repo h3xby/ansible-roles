@@ -7,4 +7,4 @@ Description=Foreman app service
 ExecStart=/bin/bash -lc "cd ~/app/current && BIND={{foreman_bind}} foreman start"
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=basic.target
